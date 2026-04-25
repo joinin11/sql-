@@ -12,13 +12,8 @@ import {
   ChevronRight, 
   ChevronLeft,
   AlertCircle,
-  Loader2,
-  Lock,
-  Unlock,
-  ShieldCheck
+  Loader2
 } from 'lucide-react';
-
-const AUTH_CODE = 'HAPPY424';
 import confetti from 'canvas-confetti';
 
 import { lessons } from './data/lessons';
@@ -27,41 +22,7 @@ import { SqlEditor } from './components/SqlEditor';
 import { Lesson, Task } from './types';
 
 function App() {
-  const [isLocked, setIsLocked] = useState(() => {
-    return localStorage.getItem('wukuai_auth') !== 'HAPPY424';
-  });
-  const [authInput, setAuthInput] = useState('');
-  const [authError, setAuthError] = useState(false);
-  const [isLoggingIn, setIsLoggingIn] = useState(false);
-
   const [db, setDb] = useState<initSqlJs.Database | null>(null);
-
-  const handleVerify = () => {
-    setIsLoggingIn(true);
-    setAuthError(false);
-    
-    // Simulate a bit of processing for "audit rigor" feel
-    setTimeout(() => {
-      if (authInput === AUTH_CODE) {
-        localStorage.setItem('wukuai_auth', AUTH_CODE);
-        setIsLocked(false);
-        confetti({
-          particleCount: 100,
-          spread: 70,
-          origin: { y: 0.6 }
-        });
-      } else {
-        setAuthError(true);
-        // Shake animation handled by CSS/motion
-      }
-      setIsLoggingIn(false);
-    }, 800);
-  };
-
-  const handleClearAuth = () => {
-    localStorage.removeItem('wukuai_auth');
-    window.location.reload();
-  };
   const [isReady, setIsReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeLessonId, setActiveLessonId] = useState(lessons[0].id);
@@ -73,9 +34,6 @@ function App() {
   const [completedLessons, setCompletedLessons] = useState<string[]>(() => {
     const saved = localStorage.getItem('sql_audit_progress');
     return saved ? JSON.parse(saved) : [];
-  });
-  const [isGraduated, setIsGraduated] = useState(() => {
-    return localStorage.getItem('SQL_COURSE_COMPLETED') === 'true';
   });
   const [showSuccess, setShowSuccess] = useState(false);
   const [showLessonComplete, setShowLessonComplete] = useState(false);
@@ -358,8 +316,8 @@ function App() {
           
           console.group('🔍 Audit Comparison FAILURE');
           console.log('Actual Data (Cleaned):', formatted.slice(0, 3));
-          console.log('Expected Data (Cleaned):', referenceData.slice(0, 3));
-          console.log('Wait, why it failed? Row count user:', formatted.length, ' expected:', referenceData.length);
+          console.log('Expected Data (Cleaned):', activeTask.expectedResult.slice(0, 3));
+          console.log('Wait, why it failed? Row count user:', formatted.length, ' expected:', activeTask.expectedResult.length);
           console.groupEnd();
         }
       } catch (err: any) {
@@ -374,79 +332,6 @@ function App() {
   const nextLesson = () => {
     handleNextLesson();
   };
-
-  if (isLocked) {
-    return (
-      <div className="h-screen w-full bg-gradient-to-br from-indigo-900 via-slate-900 to-black flex items-center justify-center p-6 relative overflow-hidden">
-        {/* Decorative elements */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/10 rounded-full blur-[120px] -mr-48 -mt-48" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-500/10 rounded-full blur-[120px] -ml-48 -mb-48" />
-        
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="w-full max-w-md bg-white/10 backdrop-blur-2xl border border-white/20 rounded-[2.5rem] p-10 shadow-[0_32px_64px_rgba(0,0,0,0.4)] relative z-10"
-        >
-          <div className="text-center mb-10">
-            <div className="w-16 h-16 bg-gradient-to-tr from-indigo-600 to-indigo-400 rounded-2xl mx-auto flex items-center justify-center shadow-2xl shadow-indigo-500/20 mb-6">
-              <ShieldCheck className="text-white" size={32} />
-            </div>
-            <h2 className="text-2xl font-serif italic text-white font-bold mb-2 tracking-tight">五块钱的 SQL 审计实战室</h2>
-            <p className="text-indigo-300/60 text-[10px] font-bold uppercase tracking-[0.3em]">—— 数字化对账进阶之路 ——</p>
-          </div>
-
-          <div className="space-y-6">
-            <motion.div 
-              animate={authError ? { x: [-10, 10, -10, 10, 0] } : {}}
-              className="relative"
-            >
-              <input 
-                type="text"
-                value={authInput}
-                onChange={(e) => setAuthInput(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleVerify()}
-                placeholder="请输入 8 位授权码..."
-                className={`w-full bg-black/20 border ${authError ? 'border-rose-500 ring-4 ring-rose-500/10' : 'border-white/10'} rounded-2xl py-4 px-6 text-white text-center font-mono tracking-[0.5em] placeholder:tracking-normal placeholder:text-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all`}
-              />
-              {authError && (
-                <motion.p 
-                  initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }}
-                  className="text-[10px] text-rose-400 font-bold mt-3 text-center"
-                >
-                  授权码无效。请前往闲鱼搜索“五块钱”获取专属钥匙。
-                </motion.p>
-              )}
-            </motion.div>
-
-            <button 
-              onClick={handleVerify}
-              disabled={isLoggingIn || !authInput}
-              className="w-full py-4 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-2xl text-xs font-bold uppercase tracking-widest transition-all shadow-xl shadow-indigo-900/20 flex items-center justify-center gap-3"
-            >
-              {isLoggingIn ? <Loader2 className="animate-spin" size={16} /> : <Unlock size={16} />}
-              验证并开启审计
-            </button>
-            
-            <div className="pt-4 border-t border-white/5 text-center">
-              <p className="text-[10px] text-slate-400 leading-relaxed mb-4">
-                只需 <span className="text-indigo-300 font-bold">5 元</span>，获取永久访问权限及全套审计脚本源码。
-              </p>
-              <button 
-                onClick={handleClearAuth}
-                className="text-[9px] text-slate-600 hover:text-slate-500 underline underline-offset-4 transition-colors"
-              >
-                清除本地状态 (Debug)
-              </button>
-            </div>
-          </div>
-        </motion.div>
-
-        <div className="absolute bottom-10 right-10 text-[10px] font-mono text-slate-700 tracking-tighter">
-          Birthday Edition v1.0
-        </div>
-      </div>
-    );
-  }
 
   if (!isReady) {
     return (
@@ -482,9 +367,9 @@ function App() {
       {/* Sidebar */}
       <aside className="w-80 bg-[#0f172a] border-r border-slate-800 flex flex-col shrink-0">
         <div className="p-8 border-b border-slate-800/50">
-          <h2 className="text-white font-serif italic text-xl flex items-center gap-3">
+          <h2 className="text-white font-serif italic text-2xl flex items-center gap-3">
             <Database className="text-indigo-400" size={24} />
-            五块钱的 SQL 审计实战室
+            SQL 报表审计
           </h2>
           <p className="text-slate-500 text-[9px] mt-2 font-bold uppercase tracking-[0.2em]">Logistics Intelligence v3.0</p>
         </div>
@@ -524,32 +409,16 @@ function App() {
         </div>
         <div className="p-6 bg-slate-900/50 border-t border-slate-800">
            <div className="flex justify-between items-center mb-2">
-              <span className="text-[10px] text-slate-500 font-bold uppercase">
-                {completedLessons.length === lessons.length ? '🎓 审计认证已达成' : '学习进度'}
-              </span>
-              <span className={`text-[10px] font-bold ${completedLessons.length === lessons.length ? 'text-emerald-400' : 'text-indigo-400'}`}>
-                {Math.round((completedLessons.length / lessons.length) * 100)}%
-              </span>
+              <span className="text-[10px] text-slate-500 font-bold uppercase">学习进度</span>
+              <span className="text-[10px] text-indigo-400 font-bold">{Math.round((completedLessons.length / lessons.length) * 100)}%</span>
            </div>
            <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
               <motion.div 
-                className={`h-full ${completedLessons.length === lessons.length ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.4)]' : 'bg-indigo-500'}`} 
+                className="h-full bg-indigo-500" 
                 initial={{ width: 0 }}
                 animate={{ width: `${(completedLessons.length / lessons.length) * 100}%` }}
               />
            </div>
-        </div>
-        
-        {/* Author Card */}
-        <div className="p-6 mt-auto">
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-5 hover:bg-white/[0.08] transition-all group">
-            <h4 className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest mb-2 flex items-center gap-2">
-              <Info size={12} /> 关于作者
-            </h4>
-            <p className="text-[11px] text-slate-400 leading-relaxed group-hover:text-slate-300 transition-colors">
-              我是<span className="text-indigo-300 font-bold">“五块钱”</span>，一名深耕物流财务的审计人员。希望这个实战室能帮你告别手工对账，用代码解决战斗！
-            </p>
-          </div>
         </div>
       </aside>
 
@@ -1015,55 +884,23 @@ function App() {
                 <div className="w-20 h-20 bg-indigo-600 rounded-3xl mx-auto flex items-center justify-center shadow-2xl shadow-indigo-200 mb-8 rotate-3">
                    <CheckCircle className="text-white" size={40} />
                 </div>
-                <h3 className="text-3xl font-serif italic text-slate-900 mb-4">
-                  {activeLessonId === 'lesson-14' ? '🎓 审计大师：全关卡达成' : '全关卡审计达成'}
-                </h3>
+                <h3 className="text-3xl font-serif italic text-slate-900 mb-4">全关卡审计达成</h3>
                 <p className="text-slate-500 text-sm leading-relaxed mb-10 px-8">
-                  {activeLessonId === 'lesson-14' ? (
-                    <>
-                      恭喜！你已掌握物流财务审计核心 SQL 技能，现已具备自动化对账能力。
-                      <br />
-                      所有的审计任务已全部通关。
-                    </>
-                  ) : (
-                    <>
-                      恭喜！您已成功完成 <span className="font-bold text-slate-900">{activeLesson.title}</span> 的所有审计任务。
-                      业务逻辑核验无误，数据包已封存。
-                    </>
-                  )}
+                  恭喜！您已成功完成 <span className="font-bold text-slate-900">{activeLesson.title}</span> 的所有审计任务。
+                  业务逻辑核验无误，数据包已封存。
                 </p>
                 <div className="flex flex-col gap-3">
-                  {activeLessonId !== 'lesson-14' ? (
-                    <button 
-                      onClick={handleNextLesson}
-                      className="w-full py-4 bg-[#0f172a] hover:bg-slate-800 text-white rounded-2xl text-xs font-bold uppercase tracking-widest transition-all shadow-xl shadow-slate-200 flex items-center justify-center gap-2"
-                    >
-                      进入下一章节 <ChevronRight size={16} />
-                    </button>
-                  ) : (
-                    <button 
-                      onClick={() => {
-                        localStorage.setItem('SQL_COURSE_COMPLETED', 'true');
-                        setIsGraduated(true);
-                        setShowLessonComplete(false);
-                        // Optional: Reset active index or show a "Graduate" state UI
-                      }}
-                      className="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl text-xs font-bold uppercase tracking-widest transition-all shadow-xl shadow-indigo-100 flex items-center justify-center gap-2"
-                    >
-                      查看审计结业证书 <CheckCircle size={16} />
-                    </button>
-                  )}
                   <button 
-                    onClick={() => {
-                      if (activeLessonId === 'lesson-14') {
-                         localStorage.setItem('SQL_COURSE_COMPLETED', 'true');
-                         setIsGraduated(true);
-                      }
-                      setShowLessonComplete(false);
-                    }}
+                    onClick={handleNextLesson}
+                    className="w-full py-4 bg-[#0f172a] hover:bg-slate-800 text-white rounded-2xl text-xs font-bold uppercase tracking-widest transition-all shadow-xl shadow-slate-200 flex items-center justify-center gap-2"
+                  >
+                    进入下一章节 <ChevronRight size={16} />
+                  </button>
+                  <button 
+                    onClick={() => setShowLessonComplete(false)}
                     className="w-full py-4 bg-slate-50 hover:bg-slate-100 text-slate-500 rounded-2xl text-xs font-bold uppercase tracking-widest transition-all"
                   >
-                    {activeLessonId === 'lesson-14' ? '返回主菜单' : '留在本页复习'}
+                    留在本页复习
                   </button>
                 </div>
               </div>
@@ -1071,13 +908,6 @@ function App() {
           </div>
         )}
       </AnimatePresence>
-      
-      {/* Fixed Footer */}
-      <footer className="fixed bottom-0 left-0 right-0 h-10 bg-slate-900/80 backdrop-blur-md border-t border-white/5 z-50 flex items-center justify-center px-8">
-        <p className="text-[10px] text-indigo-300/80 font-medium tracking-wider">
-          © 2026 五块钱 | 专注于物流财务自动化审计
-        </p>
-      </footer>
     </div>
   );
 }

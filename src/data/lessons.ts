@@ -9,9 +9,9 @@ export const lessons: Lesson[] = [
 
 所有对账工作都始于对原始数据的提取。
 
-\`\`\`sql
-SELECT 字段名 FROM 表名;
-\`\`\`
+<div class="formula-box">
+<span class="formula-keyword">SELECT</span> <span class="formula-param">字段名</span> <span class="formula-keyword">FROM</span> <span class="formula-param">表名</span>;
+</div>
     `,
     imageUrl: 'https://picsum.photos/seed/audit-1/800/400',
     tableToQuery: 'shipments',
@@ -57,10 +57,10 @@ SELECT 字段名 FROM 表名;
 
 在物流业，由于系统拼写错误，我们常需要使用 \`LIKE\`；同时，审计特定城市群需要 \`IN\`。
 
-\`\`\`sql
-WHERE 字段 LIKE '%内容%'
-WHERE 字段 IN ('值1', '值2')
-\`\`\`
+<div class="formula-box">
+<span class="formula-keyword">WHERE</span> 字段 <span class="formula-keyword">LIKE</span> <span class="formula-param">'%内容%'</span> <br/>
+<span class="formula-keyword">WHERE</span> 字段 <span class="formula-keyword">IN</span> <span class="formula-param">('值1', '值2')</span>
+</div>
     `,
     imageUrl: 'https://picsum.photos/seed/audit-2/800/400',
     tableToQuery: 'shipments',
@@ -127,9 +127,9 @@ WHERE 字段 IN ('值1', '值2')
 
 审计月度报表时，我们需要锁定特定的 shipping_date 区间。
 
-\`\`\`sql
-WHERE 日期 BETWEEN '2024-03-01' AND '2024-03-10'
-\`\`\`
+<div class="formula-box">
+<span class="formula-keyword">WHERE</span> 日期 <span class="formula-keyword">BETWEEN</span> <span class="formula-param">'2024-03-01'</span> <span class="formula-keyword">AND</span> <span class="formula-param">'2024-03-10'</span>
+</div>
     `,
     imageUrl: 'https://picsum.photos/seed/audit-3/800/400',
     tableToQuery: 'shipments',
@@ -179,10 +179,10 @@ WHERE 日期 BETWEEN '2024-03-01' AND '2024-03-10'
 
 INNER JOIN 只显示 A 表和 B 表中都有的交集。
 
-\`\`\`sql
-SELECT s.shipment_id, i.invoice_no FROM shipments s
-INNER JOIN invoices i ON s.shipment_id = i.shipment_id;
-\`\`\`
+<div class="formula-box">
+<span class="formula-keyword">SELECT</span> s.shipment_id, i.invoice_no <span class="formula-keyword">FROM</span> shipments s <br/>
+<span class="formula-keyword">INNER JOIN</span> invoices i <span class="formula-keyword">ON</span> s.shipment_id = i.shipment_id;
+</div>
     `,
     imageUrl: 'https://picsum.photos/seed/audit-4/800/400',
     tableToQuery: 'shipments',
@@ -224,10 +224,10 @@ INNER JOIN invoices i ON s.shipment_id = i.shipment_id;
     
 在财务审计中，我们很少看单条记录，更多是关注总量。
 
-\`\`\`sql
-SELECT SUM(字段) FROM 表; -- 基础用法
-SELECT SUM(字段) AS total FROM 表; -- 推荐用法（带别名）
-\`\`\`
+<div class="formula-box">
+<span class="formula-keyword">SELECT</span> <span class="formula-keyword">SUM</span>(字段) <span class="formula-keyword">FROM</span> 表; <span class="text-gray-400 text-xs">// 基础用法</span> <br/>
+<span class="formula-keyword">SELECT</span> <span class="formula-keyword">SUM</span>(字段) <span class="formula-keyword">AS</span> total <span class="formula-keyword">FROM</span> 表; <span class="text-gray-400 text-xs">// 推荐用法（带别名）</span>
+</div>
 
 **提示：** 现在的审计系统非常智能，只要你的计算结果正确，即使没有使用 \`AS\` 别名也能顺利通关！
     `,
@@ -237,7 +237,7 @@ SELECT SUM(字段) AS total FROM 表; -- 推荐用法（带别名）
       {
         id: 't5-1',
         title: '【初级】运单总量盘点',
-        instructions: '统计 shipments 表中目前的运单总条数，并将该列命名为 **total_cnt**。',
+        instructions: '统计 shipments 表中目前的运单总条数，并将结果列命名为 **total_cnt**。',
         expectedSql: 'SELECT COUNT(*) AS total_cnt FROM shipments;',
         hint: 'SELECT COUNT(*) AS total_cnt FROM shipments;',
         structuralHint: 'SELECT COUNT(*) AS [别名] FROM [表]',
@@ -246,7 +246,7 @@ SELECT SUM(字段) AS total FROM 表; -- 推荐用法（带别名）
       {
         id: 't5-2',
         title: '【进阶】总仓储量审计',
-        instructions: '汇总 shipments 表中所有货物的总 SKU 数量 (sku_count)，并将该列命名为 **total_sku**。',
+        instructions: '汇总 shipments 表中所有货物的总 SKU 数量 (sku_count)，并将结果列命名为 **total_sku**。',
         expectedSql: 'SELECT SUM(sku_count) AS total_sku FROM shipments;',
         hint: 'SELECT SUM(sku_count) AS total_sku FROM shipments;',
         structuralHint: 'SELECT SUM([数值列]) AS [别名] FROM [表]',
@@ -255,7 +255,7 @@ SELECT SUM(字段) AS total FROM 表; -- 推荐用法（带别名）
       {
         id: 't5-3',
         title: '【挑战】平均运费核算',
-        instructions: '从 invoices 表中计算所有已出账单的平均美元金额 (amount_usd)，并将该列命名为 **avg_price**。',
+        instructions: '从 invoices 表中计算所有已出账单的平均美元金额 (amount_usd)，并将结果列命名为 **avg_price**。',
         expectedSql: 'SELECT AVG(amount_usd) AS avg_price FROM invoices;',
         hint: 'SELECT AVG(amount_usd) AS avg_price FROM invoices;',
         structuralHint: 'SELECT AVG([数值列]) AS [别名] FROM [表]',
@@ -271,10 +271,10 @@ SELECT SUM(字段) AS total FROM 表; -- 推荐用法（带别名）
     
 GROUP BY 是将数据按某一列“归类”并执行统计。
 
-\`\`\`sql
-SELECT 维度, SUM(量) FROM 表
-GROUP BY 维度;
-\`\`\`
+<div class="formula-box">
+<span class="formula-keyword">SELECT</span> 维度, <span class="formula-keyword">SUM</span>(量) <span class="formula-keyword">FROM</span> 表 <br/>
+<span class="formula-keyword">GROUP BY</span> 维度;
+</div>
     `,
     imageUrl: 'https://picsum.photos/seed/audit-6/800/400',
     tableToQuery: 'shipments',
@@ -282,7 +282,7 @@ GROUP BY 维度;
       {
         id: 't6-1',
         title: '【初级】客户分布审计',
-        instructions: '按客户 (client_name) 分组，统计每个客户的运单总数，并将该列命名为 **cnt**。',
+        instructions: '按客户 (client_name) 分组，统计每个客户的运单总数，并将统计列命名为 **cnt**。',
         expectedSql: 'SELECT client_name, COUNT(*) AS cnt FROM shipments GROUP BY client_name;',
         hint: 'SELECT client_name, COUNT(*) AS cnt FROM shipments GROUP BY client_name;',
         structuralHint: 'SELECT [维度], COUNT(*) AS [别名] FROM ... GROUP BY [维度]',
@@ -291,7 +291,7 @@ GROUP BY 维度;
       {
         id: 't6-2',
         title: '【进阶】目的地货量排行',
-        instructions: '按目的地 (destination) 分组，求每个目的地的 SKU 总和，并将该列命名为 **total_sku**。',
+        instructions: '按目的地 (destination) 分组，求每个目的地的 SKU 总和，并将结果列命名为 **total_sku**。',
         expectedSql: 'SELECT destination, SUM(sku_count) AS total_sku FROM shipments GROUP BY destination;',
         hint: 'SELECT destination, SUM(sku_count) AS total_sku FROM shipments GROUP BY destination;',
         structuralHint: 'SELECT [列], SUM(...) AS [别名] FROM [表] GROUP BY [列]',
@@ -307,11 +307,11 @@ GROUP BY 维度;
 
 WHERE 是在分组前过滤原始行；HAVING 是在聚合完成后过滤统计结果。
 
-\`\`\`sql
-SELECT 客户, SUM(货量) FROM shipments
-GROUP BY 客户
-HAVING SUM(货量) > 500;
-\`\`\`
+<div class="formula-box">
+<span class="formula-keyword">SELECT</span> 客户, <span class="formula-keyword">SUM</span>(货量) <span class="formula-keyword">FROM</span> shipments <br/>
+<span class="formula-keyword">GROUP BY</span> 客户 <br/>
+<span class="formula-keyword">HAVING</span> <span class="formula-keyword">SUM</span>(货量) > 500;
+</div>
     `,
     imageUrl: 'https://picsum.photos/seed/audit-7/800/400',
     tableToQuery: 'shipments',
@@ -319,7 +319,7 @@ HAVING SUM(货量) > 500;
       {
         id: 't7-1',
         title: '【初级】按目的地汇总',
-        instructions: '统计每个目的地的总 SKU 货量，并将该列命名为 **total_sku**。',
+        instructions: '统计每个目的地的总 SKU 货量，并将结果列命名为 **total_sku**。',
         expectedSql: 'SELECT destination, SUM(sku_count) AS total_sku FROM shipments GROUP BY destination;',
         hint: 'SELECT destination, SUM(sku_count) AS total_sku FROM shipments GROUP BY destination;',
         structuralHint: 'SELECT [列], SUM([聚合]) AS [别名] FROM [表] GROUP BY [列]',
@@ -328,7 +328,7 @@ HAVING SUM(货量) > 500;
       {
         id: 't7-2',
         title: '【进阶】排除小额货量目的地',
-        instructions: '找出 SKU 总和大于 1000 的所有目的地，并将该列命名为 **total_sku**。',
+        instructions: '找出 SKU 总和大于 1000 的所有目的地，并将货量汇总列命名为 **total_sku**。',
         expectedSql: 'SELECT destination, SUM(sku_count) AS total_sku FROM shipments GROUP BY destination HAVING SUM(sku_count) > 1000;',
         hint: 'SELECT destination, SUM(sku_count) AS total_sku FROM shipments GROUP BY destination HAVING SUM(sku_count) > 1000;',
         structuralHint: '... GROUP BY ... HAVING [聚合条件]',
@@ -337,7 +337,7 @@ HAVING SUM(货量) > 500;
       {
         id: 't7-3',
         title: '【挑战】客户单量双重过滤',
-        instructions: '找出运单数量超过 1 票的客户名称及其运单数，并将该列命名为 **cnt**。',
+        instructions: '找出运单数量超过 1 票的客户名称及其运单数，并将统计列命名为 **cnt**。',
         expectedSql: 'SELECT client_name, COUNT(*) AS cnt FROM shipments GROUP BY client_name HAVING COUNT(*) > 1;',
         hint: 'SELECT client_name, COUNT(*) AS cnt FROM shipments GROUP BY client_name HAVING COUNT(*) > 1;',
         structuralHint: '... GROUP BY ... HAVING COUNT(*) > ...',
@@ -353,10 +353,10 @@ HAVING SUM(货量) > 500;
     
 LEFT JOIN 会保留左表所有记录，即使右表没有匹配。这是查找“漏开账单”的核心逻辑。
 
-\`\`\`sql
-SELECT * FROM TableA LEFT JOIN TableB
-ON A.id = B.id WHERE B.id IS NULL;
-\`\`\`
+<div class="formula-box">
+<span class="formula-keyword">SELECT</span> * <span class="formula-keyword">FROM</span> TableA <span class="formula-keyword">LEFT JOIN</span> TableB <br/>
+<span class="formula-keyword">ON</span> A.id = B.id <span class="formula-keyword">WHERE</span> B.id <span class="formula-keyword">IS NULL</span>;
+</div>
     `,
     imageUrl: 'https://picsum.photos/seed/audit-8/800/400',
     tableToQuery: 'shipments',
@@ -389,9 +389,9 @@ ON A.id = B.id WHERE B.id IS NULL;
     
 当审计条件变多时，逻辑优先级极其重要。
 
-\`\`\`sql
-WHERE (条件A AND 条件B) OR 条件C;
-\`\`\`
+<div class="formula-box">
+<span class="formula-keyword">WHERE</span> (条件A <span class="formula-keyword">AND</span> 条件B) <span class="formula-keyword">OR</span> 条件C;
+</div>
     `,
     imageUrl: 'https://picsum.photos/seed/audit-9/800/400',
     tableToQuery: 'shipments',
@@ -415,11 +415,11 @@ WHERE (条件A AND 条件B) OR 条件C;
 
 CASE WHEN 可以将数据库的死代码翻译成业务语言（如：海量单、普通单、微型单）。
 
-\`\`\`sql
-CASE WHEN SKU > 1000 THEN '海量单'
-WHEN SKU > 100 THEN '普通单'
-ELSE '微型单' END AS 等级
-\`\`\`
+<div class="formula-box">
+<span class="formula-keyword">CASE WHEN</span> SKU > 1000 <span class="formula-keyword">THEN</span> '海量单' <br/>
+<span class="formula-keyword">WHEN</span> SKU > 100 <span class="formula-keyword">THEN</span> '普通单' <br/>
+<span class="formula-keyword">ELSE</span> '微型单' <span class="formula-keyword">END</span> <span class="formula-keyword">AS</span> 等级
+</div>
     `,
     imageUrl: 'https://picsum.photos/seed/audit-10/800/400',
     tableToQuery: 'shipments',
@@ -436,7 +436,7 @@ ELSE '微型单' END AS 等级
       {
         id: 't10-2',
         title: '【进阶】三段式分类',
-        instructions: "根据 sku_count 将运单分为三类：>1000 为 '大货', 500-1000 为 '中货', <500 为 '小货'，并将该列命名为 **rank**。",
+        instructions: "根据 sku_count 将运单分为三类：>1000 为 '大货', 500-1000 为 '中货', <500 为 '小货'，并将结果列命名为 **rank**。",
         expectedSql: "SELECT shipment_id, CASE WHEN sku_count > 1000 THEN '大货' WHEN sku_count >= 500 THEN '中货' ELSE '小货' END AS rank FROM shipments;",
         hint: "SELECT shipment_id, CASE WHEN sku_count > 1000 THEN '大货' WHEN sku_count >= 500 THEN '中货' ELSE '小货' END AS rank FROM shipments;",
         structuralHint: 'CASE WHEN ... WHEN ... ELSE ... END AS [别名]',
@@ -445,7 +445,7 @@ ELSE '微型单' END AS 等级
       {
         id: 't10-3',
         title: '【挑战】账单金额报警',
-        instructions: "在 invoices 表中对金额打标：金额 > 5000 为 '高值'，0-5000 为 '标准'，0 为 '免费单'，并将该列命名为 **alert**。",
+        instructions: "在 invoices 表中对金额打标：金额 > 5000 为 '高值'，0-5000 为 '标准'，0 为 '免费单'，并将标记列命名为 **alert**。",
         expectedSql: "SELECT invoice_no, CASE WHEN amount_usd > 5000 THEN '高值' WHEN amount_usd > 0 THEN '标准' ELSE '免费单' END AS alert FROM invoices;",
         hint: "SELECT invoice_no, CASE WHEN amount_usd > 5000 THEN '高值' WHEN amount_usd > 0 THEN '标准' ELSE '免费单' END AS alert FROM invoices;",
         structuralHint: 'SELECT ..., CASE ... END AS [别名] FROM ...',
@@ -461,9 +461,9 @@ ELSE '微型单' END AS 等级
 
 DISTINCT 用于剔除重复记录；AS 用于定义输出列的名称，让审计报告更专业。
 
-\`\`\`sql
-SELECT DISTINCT 客户 AS [客户大名单] FROM 表;
-\`\`\`
+<div class="formula-box">
+<span class="formula-keyword">SELECT DISTINCT</span> 客户 <span class="formula-keyword">AS</span> [客户大名单] <span class="formula-keyword">FROM</span> 表;
+</div>
     `,
     imageUrl: 'https://picsum.photos/seed/audit-11/800/400',
     tableToQuery: 'shipments',
@@ -480,7 +480,7 @@ SELECT DISTINCT 客户 AS [客户大名单] FROM 表;
       {
         id: 't11-2',
         title: '【进阶】构建财务报表头',
-        instructions: '获取所有唯一的目的地，并将结果列命名为 **审计目标城市**。',
+        instructions: '获取所有唯一的目的地，并将列名 **[必须使用别名]** 显示为 **"审计目标城市"**。',
         expectedSql: 'SELECT DISTINCT destination AS "审计目标城市" FROM shipments;',
         hint: 'SELECT DISTINCT destination AS 审计目标城市 FROM shipments;',
         structuralHint: 'SELECT DISTINCT [列] AS [新名] FROM [表]',
@@ -506,10 +506,10 @@ SELECT DISTINCT 客户 AS [客户大名单] FROM 表;
 
 子查询是指嵌套在另一个 SQL 语句中的查询。
 
-\`\`\`sql
-SELECT * FROM invoices
-WHERE 金额 > (SELECT AVG(金额) FROM invoices);
-\`\`\`
+<div class="formula-box">
+<span class="formula-keyword">SELECT</span> * <span class="formula-keyword">FROM</span> invoices <br/>
+<span class="formula-keyword">WHERE</span> 金额 > (<span class="formula-keyword">SELECT AVG</span>(金额) <span class="formula-keyword">FROM</span> invoices);
+</div>
     `,
     imageUrl: 'https://picsum.photos/seed/audit-12/800/400',
     tableToQuery: 'invoices',
@@ -551,12 +551,12 @@ WHERE 金额 > (SELECT AVG(金额) FROM invoices);
 
 在财务系统中，我们需要找出某个客户“最近的一单”或“第一单”。
 
-\`\`\`sql
-ROW_NUMBER() OVER(
-  PARTITION BY 客户
-  ORDER BY 日期
-) AS 编号
-\`\`\`
+<div class="formula-box">
+<span class="formula-keyword">ROW_NUMBER() OVER</span>(<br/>
+&nbsp;&nbsp;<span class="formula-keyword">PARTITION BY</span> 客户 <br/>
+&nbsp;&nbsp;<span class="formula-keyword">ORDER BY</span> 日期 <br/>
+) <span class="formula-keyword">AS</span> 编号
+</div>
     `,
     imageUrl: 'https://picsum.photos/seed/audit-13/800/400',
     tableToQuery: 'shipments',
@@ -564,7 +564,7 @@ ROW_NUMBER() OVER(
       {
         id: 't13-1',
         title: '【初级】全表流水号',
-        instructions: '给所有运单生成一个按 shipping_date 排序的流水号，并将该列命名为 **num**。',
+        instructions: '给所有运单生成一个按 shipping_date 排序的流水号，列名请命名为 **num**。',
         expectedSql: 'SELECT shipment_id, ROW_NUMBER() OVER(ORDER BY shipping_date) AS num FROM shipments;',
         hint: 'SELECT shipment_id, ROW_NUMBER() OVER(ORDER BY shipping_date) AS num FROM shipments;',
         structuralHint: 'ROW_NUMBER() OVER(ORDER BY ...)',
@@ -574,7 +574,7 @@ ROW_NUMBER() OVER(
       {
         id: 't13-2',
         title: '【进阶】客户分组编号',
-        instructions: '按客户(client_name)分组，并按日期排序，给每个客户的运单分配独立序号，并将该列命名为 **seq**。',
+        instructions: '按客户(client_name)分组，并按日期排序，给每个客户的运单分配独立序号，命名为 **seq**。',
         expectedSql: 'SELECT client_name, shipment_id, ROW_NUMBER() OVER(PARTITION BY client_name ORDER BY shipping_date) AS seq FROM shipments;',
         hint: 'SELECT client_name, shipment_id, ROW_NUMBER() OVER(PARTITION BY client_name ORDER BY shipping_date) AS seq FROM shipments;',
         structuralHint: 'ROW_NUMBER() OVER(PARTITION BY ... ORDER BY ...)',
@@ -584,7 +584,7 @@ ROW_NUMBER() OVER(
       {
         id: 't13-3',
         title: '【挑战】标记最近一单',
-        instructions: '找出每个客户最后（最新）一票运单的 ID。请在子查询中将 ROW_NUMBER() 生成的列命名为 **rn**，并在外层查询中根据 **rn = 1** 进行过滤。',
+        instructions: '找出每个客户最后（最新）一票运单的 ID。',
         expectedSql: 'SELECT client_name, shipment_id FROM (SELECT client_name, shipment_id, ROW_NUMBER() OVER(PARTITION BY client_name ORDER BY shipping_date DESC) as rn FROM shipments) WHERE rn = 1;',
         hint: 'SELECT client_name, shipment_id FROM (SELECT client_name, shipment_id, ROW_NUMBER() OVER(PARTITION BY client_name ORDER BY shipping_date DESC) as rn FROM shipments) WHERE rn = 1;',
         structuralHint: 'SELECT ... FROM (SELECT ... ROW_NUMBER() ... ) WHERE rn = 1',
@@ -600,10 +600,10 @@ ROW_NUMBER() OVER(
 
 恭喜！你已掌握了物流财务审计的核心 SQL 武器。现在请利用联表、聚合、筛选、CASE 判定完成最后的审计报告。
 
-\`\`\`sql
-SELECT 综合数据 FROM 全链条关联
-WHERE 逻辑漏洞判定;
-\`\`\`
+<div class="formula-box">
+<span class="formula-keyword">SELECT</span> 综合数据 <span class="formula-keyword">FROM</span> 全链条关联 <br/>
+<span class="formula-keyword">WHERE</span> 逻辑漏洞判定;
+</div>
     `,
     imageUrl: 'https://picsum.photos/seed/final-audit/800/400',
     tableToQuery: 'shipments',
@@ -611,7 +611,7 @@ WHERE 逻辑漏洞判定;
       {
         id: 't14-1',
         title: '【综合】财务状态大盘',
-        instructions: '统计目前所有已生成账单的总额和运单总量，并将该两列分别命名为 **total_revenue** 和 **bill_count**。',
+        instructions: '统计目前所有已生成账单的总额和运单总量，并分别命名为 **total_revenue** 和 **bill_count**。',
         expectedSql: 'SELECT SUM(amount_usd) AS total_revenue, COUNT(*) AS bill_count FROM invoices;',
         hint: 'SELECT SUM(amount_usd) AS total_revenue, COUNT(*) AS bill_count FROM invoices;',
         structuralHint: 'SELECT SUM(...) AS [别名1], COUNT(*) AS [别名2] FROM ...',
