@@ -1,0 +1,10 @@
+{
+  "name": "SQL Academy - 交互式 SQL 学习平台",
+  "description": "一个像 xuesql.cn 一样的交互式 SQL 学习平台。包含基础课程、视觉直观的图解、以及可以在浏览器中直接运行的 SQL 练习题。",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "INTERACTIVE_SQL_ENGINE",
+    "VISUAL_LESSONS",
+    "PRACTICE_EXERCISES"
+  ]
+}
