@@ -92,10 +92,7 @@ WHERE 字段 IN ('值1', '值2')
         id: 't2-3',
         title: '【挑战】排除特定分单',
         instructions: '找出所有不属于 "SFO" 且不属于 "LAX" 的运单。',
-        expectedResult: [
-          { shipment_id: 'MAWB004' }, { shipment_id: 'MAWB007' }, { shipment_id: 'HAWB007-A' },
-          { shipment_id: 'MAWB011' }, { shipment_id: 'MAWB012' }, { shipment_id: 'MAWB013' }
-        ],
+        expectedSql: "SELECT shipment_id FROM shipments WHERE destination NOT IN ('SFO', 'LAX');",
         hint: "SELECT shipment_id FROM shipments WHERE destination NOT IN ('SFO', 'LAX');",
         structuralHint: "WHERE [列] NOT IN (...)",
         pitfallGuide: 'NOT 操作符可以反转 IN 的逻辑。'
